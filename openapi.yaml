@@ -1,0 +1,109 @@
+openapi: 3.0.3
+info:
+  title: EDP AI Initiatives Status Skill
+  description: SAP Joule skill API for presenting EDP AI initiative status in executive business reviews
+  version: 1.0.0
+
+servers:
+  - url: https://edp-ai-skill.cfapps.eu10.hana.ondemand.com
+    description: BTP Cloud Foundry (EU10)
+
+paths:
+  /api/list:
+    get:
+      operationId: listInitiatives
+      summary: List all AI initiatives
+      responses:
+        '200':
+          description: List of initiatives
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: { type: string, example: sap-autonomous-enterprise }
+                    name: { type: string, example: SAP Autonomous Enterprise }
+                    status: { type: string, enum: [on_track, at_risk, delayed, completed] }
+
+  /api/overview:
+    get:
+      operationId: getOverview
+      summary: Executive overview of all AI initiatives
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema: { type: string, enum: [on_track, at_risk, delayed, completed] }
+      responses:
+        '200':
+          description: Overview adaptive card
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillResponse' }
+
+  /api/initiative/{id}:
+    get:
+      operationId: getInitiativeDetail
+      summary: Detailed status of a specific initiative
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, example: sap-autonomous-enterprise }
+      responses:
+        '200':
+          description: Initiative detail adaptive card
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillResponse' }
+        '404':
+          description: Initiative not found
+
+  /api/space/form:
+    get:
+      operationId: getSpaceForm
+      summary: Returns the Space creation input card
+      responses:
+        '200':
+          description: Space creation form card
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillResponse' }
+
+  /api/create-space:
+    post:
+      operationId: createSpace
+      summary: Create a new Joule Work Space with auto-provisioned cards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [spaceName]
+              properties:
+                spaceName: { type: string, example: EDP SAP Autonomous Enterprise — Core Team }
+                spaceDesc: { type: string }
+                initiativeId: { type: string, example: sap-autonomous-enterprise }
+                visibility: { type: string, enum: [private, public], default: private }
+                members: { type: string, description: Newline or comma-separated emails }
+      responses:
+        '200':
+          description: Space created with auto-provisioned cards
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillResponse' }
+        '400':
+          description: Missing required field
+
+components:
+  schemas:
+    SkillResponse:
+      type: object
+      properties:
+        type: { type: string, example: skill_response }
+        version: { type: string, example: '1.0' }
+        text: { type: string }
+        adaptiveCard: { type: object }

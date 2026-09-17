@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDP AI Initiatives — Executive Status</title>
+  <style>
+    :root {
+      --shell:#1D2D3E; --primary:#0070F2;
+      --on-track:#30914C; --on-track-light:#EBF5EE;
+      --at-risk:#E76500;  --at-risk-light:#FEF2E6;
+      --delayed:#BB0000;  --delayed-light:#FEECEC;
+      --completed:#0070F2; --completed-light:#EBF5FE;
+      --bg:#F5F6F7; --card:#FFFFFF; --border:#D9D9D9;
+      --text:#32363A; --sub:#6A6D70;
+      --shadow:0 2px 8px rgba(0,0,0,.12); --shadow-h:0 8px 24px rgba(0,0,0,.18);
+      --r:8px; --font:-apple-system,BlinkMacSystemFont,"72","Segoe UI",sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+
+    .shell{background:var(--shell);color:#fff;padding:0 32px;height:72px;display:flex;
+      align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;
+      box-shadow:0 2px 12px rgba(0,0,0,.3)}
+    .brand{display:flex;align-items:center;gap:16px}
+    .logo{width:42px;height:42px;background:linear-gradient(135deg,#0070F2,#00B4D8);
+      border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+    .brand h1{font-size:18px;font-weight:700}
+    .brand p{font-size:12px;opacity:.65;margin-top:2px}
+    .shell-r{text-align:right;font-size:13px}
+    .shell-r .d{font-weight:600} .shell-r .s{opacity:.55;margin-top:2px}
+
+    .sum-bar{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);
+      border-bottom:1px solid var(--border)}
+    .st{padding:20px 24px;border-right:1px solid var(--border);cursor:pointer;
+      transition:background .15s;position:relative;user-select:none}
+    .st:last-child{border-right:none} .st:hover{background:var(--bg)}
+    .st.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+    .st[data-s="on_track"].active::after{background:var(--on-track)}
+    .st[data-s="at_risk"].active::after{background:var(--at-risk)}
+    .st[data-s="delayed"].active::after{background:var(--delayed)}
+    .st[data-s="completed"].active::after{background:var(--completed)}
+    .sc{font-size:42px;font-weight:800;line-height:1;opacity:0;transform:translateY(8px);
+      transition:opacity .5s,transform .5s}
+    .sc.vis{opacity:1;transform:translateY(0)}
+    .sc.on-track{color:var(--on-track)} .sc.at-risk{color:var(--at-risk)}
+    .sc.delayed{color:var(--delayed)} .sc.completed{color:var(--completed)}
+    .sl{font-size:13px;color:var(--sub);margin-top:5px;display:flex;align-items:center;gap:6px}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .dot.on-track{background:var(--on-track)} .dot.at-risk{background:var(--at-risk)}
+    .dot.delayed{background:var(--delayed)} .dot.completed{background:var(--completed)}
+
+    .fb{padding:14px 32px;display:flex;align-items:center;gap:8px;
+      background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
+    .fl{font-size:13px;color:var(--sub);margin-right:4px}
+    .btn{padding:6px 16px;border-radius:16px;border:1px solid var(--border);background:var(--card);
+      font-size:13px;font-family:var(--font);cursor:pointer;transition:all .15s;color:var(--text)}
+    .btn:hover{border-color:var(--primary);color:var(--primary)}
+    .btn.active{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:600}
+
+    .main{padding:24px 32px 64px;max-width:1400px;margin:0 auto}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:20px}
+
+    .card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;
+      cursor:pointer;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;
+      border-top:4px solid transparent}
+    .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-h)}
+    .card.on_track{border-top-color:var(--on-track)} .card.at_risk{border-top-color:var(--at-risk)}
+    .card.delayed{border-top-color:var(--delayed)} .card.completed{border-top-color:var(--completed)}
+    .card.hidden{display:none}
+
+    .ch{padding:20px 20px 12px}
+    .ct{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+    .cn{font-size:16px;font-weight:700;line-height:1.3}
+    .badge{flex-shrink:0;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;white-space:nowrap}
+    .badge.on_track{background:var(--on-track-light);color:var(--on-track)}
+    .badge.at_risk{background:var(--at-risk-light);color:var(--at-risk)}
+    .badge.delayed{background:var(--delayed-light);color:var(--delayed)}
+    .badge.completed{background:var(--completed-light);color:var(--completed)}
+    .cd{font-size:13px;color:var(--sub);line-height:1.5}
+
+    .cb{padding:0 20px 20px;flex:1}
+    .ph{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px}
+    .pp{font-weight:700} .pph{color:var(--sub)}
+    .track{height:8px;background:#EBEBEB;border-radius:4px;overflow:hidden;margin-bottom:14px}
+    .fill{height:100%;border-radius:4px;width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+    .fill.on_track{background:linear-gradient(90deg,var(--on-track),#52C77A)}
+    .fill.at_risk{background:linear-gradient(90deg,var(--at-risk),#F59B3A)}
+    .fill.delayed{background:linear-gradient(90deg,var(--delayed),#E53935)}
+    .fill.completed{background:linear-gradient(90deg,var(--completed),#00B4D8)}
+    .meta{display:flex;gap:16px;font-size:12px;color:var(--sub);margin-bottom:12px;flex-wrap:wrap}
+    .vb{background:#F8F9FA;border-left:3px solid var(--primary);padding:8px 12px;
+      border-radius:0 4px 4px 0;font-size:12px;color:var(--sub);line-height:1.5;margin-bottom:12px}
+    .vb b{color:var(--primary)}
+    .rr{display:flex;align-items:flex-start;gap:6px;padding:7px 10px;border-radius:4px;font-size:12px;font-weight:500}
+    .rr.high{background:var(--delayed-light);color:var(--delayed)}
+    .rr.medium{background:var(--at-risk-light);color:var(--at-risk)}
+    .rr.low{background:var(--on-track-light);color:var(--on-track)}
+
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
+      align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(3px)}
+    .overlay.open{display:flex}
+    .modal{background:var(--card);border-radius:12px;width:100%;max-width:720px;
+      max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.3);
+      animation:mIn .25s cubic-bezier(.4,0,.2,1)}
+    @keyframes mIn{from{opacity:0;transform:scale(.96) translateY(12px)}to{opacity:1;transform:none}}
+    .mh{padding:24px 24px 16px;border-bottom:1px solid var(--border);display:flex;
+      justify-content:space-between;align-items:flex-start;position:sticky;top:0;
+      background:var(--card);z-index:1}
+    .mh h2{font-size:20px;font-weight:700;margin-bottom:4px}
+    .mh p{font-size:14px;color:var(--sub);line-height:1.5}
+    .mc{background:none;border:none;font-size:22px;cursor:pointer;color:var(--sub);
+      padding:4px 8px;border-radius:4px;flex-shrink:0;margin-left:16px;line-height:1}
+    .mc:hover{background:var(--bg);color:var(--text)}
+    .mb{padding:24px}
+    .sec{margin-bottom:28px} .sec:last-child{margin-bottom:0}
+    .st2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--sub);margin-bottom:12px}
+    .mr{display:flex;gap:24px;flex-wrap:wrap;font-size:14px;margin-bottom:14px}
+    .mi .ml{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--sub)}
+    .mi .mv{font-weight:600;margin-top:2px}
+    .mtr{height:12px;background:#EBEBEB;border-radius:6px;overflow:hidden}
+    .bv{background:linear-gradient(135deg,#EBF5FE,#F0F9FF);border:1px solid #C0DCF7;
+      border-radius:var(--r);padding:16px;font-size:14px;line-height:1.6}
+    .bvi{font-size:18px;margin-bottom:6px;display:block}
+    .kg{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .kt{background:var(--bg);border-radius:var(--r);padding:16px;text-align:center;border:1px solid var(--border)}
+    .kv{font-size:22px;font-weight:800;color:var(--primary);line-height:1.2}
+    .kl{font-size:12px;color:var(--sub);margin-top:4px;line-height:1.3}
+    .msl{display:flex;flex-direction:column}
+    .msi{display:grid;grid-template-columns:24px 1fr auto;gap:12px;align-items:center;
+      padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+    .msi:last-child{border-bottom:none}
+    .msic{font-size:15px;text-align:center} .msil{color:var(--text)}
+    .msil.done{color:var(--sub);text-decoration:line-through} .msid{color:var(--sub);font-size:13px;white-space:nowrap}
+    .rl{display:flex;flex-direction:column;gap:8px}
+    .ri{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:4px;font-size:14px;line-height:1.4}
+    .ri.high{background:var(--delayed-light)} .ri.medium{background:var(--at-risk-light)} .ri.low{background:var(--on-track-light)}
+    .rs{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:10px;flex-shrink:0;margin-top:1px}
+    .ri.high .rs{background:var(--delayed);color:#fff} .ri.medium .rs{background:var(--at-risk);color:#fff} .ri.low .rs{background:var(--on-track);color:#fff}
+    .nr{padding:14px;background:var(--on-track-light);border-radius:var(--r);font-size:14px;color:var(--on-track);text-align:center}
+
+    .jh{position:fixed;bottom:24px;right:24px;background:var(--shell);color:#fff;
+      padding:12px 18px;border-radius:24px;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.3);
+      display:flex;align-items:center;gap:10px;z-index:50;user-select:none}
+    .ji{width:28px;height:28px;background:linear-gradient(135deg,#0070F2,#00B4D8);
+      border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px}
+
+    @media(max-width:768px){
+      .shell,.main,.fb{padding-left:16px;padding-right:16px}
+      .sum-bar{grid-template-columns:repeat(2,1fr)}
+      .st{border-bottom:1px solid var(--border)}
+      .grid{grid-template-columns:1fr}
+      .kg{grid-template-columns:repeat(2,1fr)}
+    }
+  </style>
+</head>
+<body>
+<header class="shell">
+  <div class="brand">
+    <div class="logo">⚡</div>
+    <div><h1>EDP AI Initiatives</h1><p>Executive Business Review · SAP Joule</p></div>
+  </div>
+  <div class="shell-r"><div class="d" id="today"></div><div class="s">Powered by SAP Joule &amp; AI Core</div></div>
+</header>
+
+<div class="sum-bar">
+  <div class="st" data-s="on_track" onclick="fBy('on_track',this)"><div class="sc on-track" id="c-on">0</div><div class="sl"><span class="dot on-track"></span>On Track</div></div>
+  <div class="st" data-s="at_risk"  onclick="fBy('at_risk',this)"> <div class="sc at-risk"  id="c-at">0</div><div class="sl"><span class="dot at-risk"></span>At Risk</div></div>
+  <div class="st" data-s="delayed"  onclick="fBy('delayed',this)"> <div class="sc delayed"  id="c-de">0</div><div class="sl"><span class="dot delayed"></span>Delayed</div></div>
+  <div class="st" data-s="completed" onclick="fBy('completed',this)"><div class="sc completed" id="c-co">0</div><div class="sl"><span class="dot completed"></span>Completed</div></div>
+</div>
+
+<div class="fb">
+  <span class="fl">Show:</span>
+  <button class="btn active" onclick="fBy('all',null,this)">All Initiatives</button>
+  <button class="btn" onclick="fBy('on_track',null,this)">🟢 On Track</button>
+  <button class="btn" onclick="fBy('at_risk',null,this)">🟡 At Risk</button>
+  <button class="btn" onclick="fBy('delayed',null,this)">🔴 Delayed</button>
+  <button class="btn" onclick="fBy('completed',null,this)">✅ Completed</button>
+</div>
+
+<div class="main"><div class="grid" id="grid"></div></div>
+
+<div class="overlay" id="overlay" onclick="bgC(event)">
+  <div class="modal" id="modal">
+    <div class="mh"><div><h2 id="mn"></h2><p id="md"></p></div><button class="mc" onclick="closeM()">✕</button></div>
+    <div class="mb" id="mb"></div>
+  </div>
+</div>
+
+<div class="jh"><div class="ji">✨</div><span>Ask Joule: <em>"Show AI initiative status"</em></span></div>
+
+<script>
+const DATA = [
+  {
+    id:"sap-autonomous-enterprise", name:"SAP Autonomous Enterprise",
+    desc:"AI-driven initiative to transform EDP into a self-optimizing enterprise using SAP Business AI — covering autonomous finance, operations, and supply chain across 8 countries",
+    status:"on_track", progress:40, phase:"Discovery & Roadmap Definition",
+    owner:"CTO Office & SAP CoE", target:"Q2 2026",
+    value:"Enable self-optimizing enterprise processes reducing manual interventions by 60% and operational costs by €12M per year",
+    kpis:{"Processes in Scope":"120+","Automation Target":"60%","Potential Saving":"€12M / yr","Countries":"8"},
+    milestones:[
+      {l:"Vision & Executive Alignment Workshop",d:"Feb 2025",done:true},
+      {l:"Use Case Prioritization (Top 20)",d:"Apr 2025",done:true},
+      {l:"Architecture & Roadmap Design",d:"Jul 2025",done:false},
+      {l:"Pilot — Finance & HR Processes",d:"Nov 2025",done:false},
+      {l:"Full Enterprise Rollout",d:"May 2026",done:false}
+    ],
+    risks:[
+      {l:"Change management complexity across 8 countries with different process maturity levels",sev:"medium"},
+      {l:"Dependency on S/4HANA upgrade completion before AI layer can be activated",sev:"medium"}
+    ]
+  },
+  {
+    id:"joule-for-consultants", name:"Joule for Consultants",
+    desc:"SAP Joule deployed as an AI productivity tool for EDP's IT consultants and SAP CoE team — assisting with code generation, solution design, documentation, and troubleshooting",
+    status:"on_track", progress:65, phase:"Pilot Deployment",
+    owner:"IT & SAP CoE", target:"Q4 2025",
+    value:"Increase consultant productivity by 30% and reduce development and documentation time by 40%",
+    kpis:{"Active Pilot Users":"45","Time Saved / Task":"35%","Code Quality":"+22%","Docs Reduction":"40%"},
+    milestones:[
+      {l:"BTP & Joule Environment Setup",d:"Jan 2025",done:true},
+      {l:"Joule Configuration for SAP CoE",d:"Mar 2025",done:true},
+      {l:"Pilot — 45 Consultants",d:"Jun 2025",done:true},
+      {l:"Broad Rollout (150 consultants)",d:"Sep 2025",done:false},
+      {l:"Full Deployment & Knowledge Base",d:"Dec 2025",done:false}
+    ],
+    risks:[
+      {l:"Skills gap in prompt engineering — training programme needed before broad rollout",sev:"low"}
+    ]
+  }
+];
+
+const SL={on_track:"🟢 On Track",at_risk:"🟡 At Risk",delayed:"🔴 Delayed",completed:"✅ Completed"};
+
+function renderCards(){
+  const g=document.getElementById('grid'); g.innerHTML='';
+  DATA.forEach(d=>{
+    const hr=d.risks.find(r=>r.sev==='high');
+    const mr=d.risks.find(r=>r.sev==='medium');
+    const rr=hr||mr;
+    const el=document.createElement('div');
+    el.className=`card ${d.status}`; el.dataset.status=d.status; el.onclick=()=>openM(d.id);
+    el.innerHTML=`
+      <div class="ch"><div class="ct"><div class="cn">${d.name}</div><div class="badge ${d.status}">${SL[d.status]}</div></div><div class="cd">${d.desc}</div></div>
+      <div class="cb">
+        <div class="ph"><span class="pp">${d.progress}% Complete</span><span class="pph">${d.phase}</span></div>
+        <div class="track"><div class="fill ${d.status}" data-t="${d.progress}"></div></div>
+        <div class="meta"><span>🎯 ${d.target}</span><span>👤 ${d.owner}</span></div>
+        <div class="vb"><b>💡 Value: </b>${d.value}</div>
+        ${rr?`<div class="rr ${rr.sev}">⚠️ ${rr.l}</div>`:''}
+      </div>`;
+    g.appendChild(el);
+  });
+}
+
+function animFills(){document.querySelectorAll('.fill[data-t]').forEach(b=>setTimeout(()=>{b.style.width=b.dataset.t+'%'},80));}
+
+function animCounts(){
+  const m={on_track:['c-on','on-track'],at_risk:['c-at','at-risk'],delayed:['c-de','delayed'],completed:['c-co','completed']};
+  Object.entries(m).forEach(([s,[id,cls]],i)=>{
+    const n=DATA.filter(d=>d.status===s).length, el=document.getElementById(id);
+    setTimeout(()=>{el.classList.add('vis');let c=0;const go=()=>{if(c<n){c++;el.textContent=c;requestAnimationFrame(go);}};requestAnimationFrame(go);},i*130);
+  });
+}
+
+function fBy(s,tile,btn){
+  document.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.st').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  else{const b=document.querySelector(`.btn[onclick*="${s}"]`);if(b)b.classList.add('active');}
+  if(tile)tile.classList.add('active');
+  document.querySelectorAll('.card').forEach(c=>{c.classList.toggle('hidden',s!=='all'&&c.dataset.status!==s);});
+}
+
+function openM(id){
+  const d=DATA.find(i=>i.id===id); if(!d) return;
+  document.getElementById('mn').textContent=d.name;
+  document.getElementById('md').textContent=d.desc;
+  const done=d.milestones.filter(m=>m.done).length;
+  document.getElementById('mb').innerHTML=`
+    <div class="sec">
+      <div class="st2">Status Overview</div>
+      <div class="mr">
+        <div class="mi"><div class="ml">Status</div><div class="mv">${SL[d.status]}</div></div>
+        <div class="mi"><div class="ml">Progress</div><div class="mv">${d.progress}%</div></div>
+        <div class="mi"><div class="ml">Phase</div><div class="mv">${d.phase}</div></div>
+        <div class="mi"><div class="ml">Target</div><div class="mv">${d.target}</div></div>
+        <div class="mi"><div class="ml">Owner</div><div class="mv">${d.owner}</div></div>
+      </div>
+      <div class="mtr"><div class="fill ${d.status}" data-t="${d.progress}" style="height:100%;border-radius:6px"></div></div>
+    </div>
+    <div class="sec">
+      <div class="st2">Business Value</div>
+      <div class="bv"><span class="bvi">💡</span>${d.value}</div>
+    </div>
+    <div class="sec">
+      <div class="st2">Key Metrics</div>
+      <div class="kg">${Object.entries(d.kpis).map(([k,v])=>`<div class="kt"><div class="kv">${v}</div><div class="kl">${k}</div></div>`).join('')}</div>
+    </div>
+    <div class="sec">
+      <div class="st2">Milestones (${done} / ${d.milestones.length} complete)</div>
+      <div class="msl">${d.milestones.map(m=>`
+        <div class="msi"><div class="msic">${m.done?'✅':'⬜'}</div><div class="msil${m.done?' done':''}">${m.l}</div><div class="msid">${m.d}</div></div>`).join('')}</div>
+    </div>
+    <div class="sec">
+      <div class="st2">Risks & Issues</div>
+      ${d.risks.length===0
+        ?'<div class="nr">✅ No active risks — initiative is on track</div>'
+        :`<div class="rl">${d.risks.map(r=>`<div class="ri ${r.sev}"><span class="rs">${r.sev.toUpperCase()}</span><span>${r.l}</span></div>`).join('')}</div>`}
+    </div>`;
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(()=>{document.querySelectorAll('#mb .fill[data-t]').forEach(b=>{b.style.width=b.dataset.t+'%';});},50);
+}
+
+function closeM(){document.getElementById('overlay').classList.remove('open');}
+function bgC(e){if(e.target===document.getElementById('overlay'))closeM();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();});
+document.getElementById('today').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+renderCards();
+setTimeout(animFills,200);
+setTimeout(animCounts,350);
+</script>
+</body>
+</html>

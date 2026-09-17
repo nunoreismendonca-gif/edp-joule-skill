@@ -1,0 +1,100 @@
+id: edp-ai-status-skill
+version: 1.0.0
+displayName: EDP AI Initiatives Status
+description: >
+  Provides an executive overview of EDP AI initiatives including live status,
+  progress tracking, milestones, KPIs, risks and business value. Also creates
+  Joule Work Spaces linked to initiatives with auto-provisioned cards.
+
+icon: sap-icon://ai
+category: Analytics & Reporting
+
+triggers:
+  phrases:
+    - hello joule and welcome to edp
+    - hello joule welcome to edp
+    - show AI initiative status
+    - EDP AI review
+    - AI project update
+    - show me the AI portfolio
+    - what is the status of our AI initiatives
+    - which AI initiatives are at risk
+    - give me the executive AI summary
+    - AI status overview
+    - status of {initiative}
+    - tell me about {initiative}
+    - how is {initiative} doing
+    - show {initiative} status
+    - create a space
+    - create a Joule Work space
+    - set up a collaboration space
+    - create space for {initiative}
+    - open a space for {initiative}
+
+  entities:
+    - name: initiative
+      description: Name or ID of an AI initiative
+      resolverEndpoint: /api/list
+      resolverField: name
+
+api:
+  baseUrl: https://edp-ai-skill.cfapps.eu10.hana.ondemand.com
+  specUrl: https://edp-ai-skill.cfapps.eu10.hana.ondemand.com/openapi.yaml
+  authentication:
+    type: oauth2
+    tokenEndpoint: https://<your-btp-subaccount>.authentication.eu10.hana.ondemand.com/oauth/token
+    clientId: ${SKILL_CLIENT_ID}
+    clientSecret: ${SKILL_CLIENT_SECRET}
+
+intents:
+  - name: getOverview
+    description: Show executive overview of all AI initiatives with greeting
+    operationId: getOverview
+    triggers:
+      - hello joule and welcome to edp
+      - hello joule welcome to edp
+      - show AI initiative status
+      - EDP AI review
+      - AI status overview
+      - show me the AI portfolio
+      - which AI initiatives are at risk
+
+  - name: getInitiativeDetail
+    description: Show detailed status of a specific initiative
+    operationId: getInitiativeDetail
+    parameters:
+      id: "{{initiative.id}}"
+    triggers:
+      - status of {initiative}
+      - tell me about {initiative}
+      - how is {initiative} doing
+      - show {initiative} status
+
+  - name: getSpaceForm
+    description: Show the Space creation form
+    operationId: getSpaceForm
+    triggers:
+      - create a Joule Work space
+      - set up a collaboration space
+      - new space
+
+  - name: createSpace
+    description: Create a Joule Work Space linked to an AI initiative
+    operationId: createSpace
+    triggers:
+      - create a space
+      - create space for {initiative}
+      - open a space for {initiative}
+
+response:
+  type: adaptiveCard
+  fallback: text
+
+metadata:
+  author: SAP Presales Architecture
+  audience: Executive
+  tags:
+    - AI
+    - Analytics
+    - EDP
+    - Business Review

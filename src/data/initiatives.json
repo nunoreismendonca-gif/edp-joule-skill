@@ -1,0 +1,57 @@
+[
+  {
+    "id": "sap-autonomous-enterprise",
+    "name": "SAP Autonomous Enterprise",
+    "description": "AI-driven initiative to transform EDP into a self-optimizing enterprise using SAP Business AI — covering autonomous finance, operations, and supply chain across 8 countries",
+    "status": "on_track",
+    "progress": 40,
+    "phase": "Discovery & Roadmap Definition",
+    "owner": "CTO Office & SAP CoE",
+    "targetDate": "Q2 2026",
+    "businessValue": "Enable self-optimizing enterprise processes reducing manual interventions by 60% and operational costs by €12M per year",
+    "kpis": {
+      "Processes in Scope": "120+",
+      "Automation Target": "60%",
+      "Potential Saving": "€12M / yr",
+      "Countries Covered": "8"
+    },
+    "milestones": [
+      { "label": "Vision & Executive Alignment Workshop", "date": "Feb 2025", "done": true },
+      { "label": "Use Case Prioritization (Top 20)", "date": "Apr 2025", "done": true },
+      { "label": "Architecture & Roadmap Design", "date": "Jul 2025", "done": false },
+      { "label": "Pilot — Finance & HR Processes", "date": "Nov 2025", "done": false },
+      { "label": "Full Enterprise Rollout", "date": "May 2026", "done": false }
+    ],
+    "risks": [
+      { "label": "Change management complexity across 8 countries with different process maturity levels", "severity": "medium" },
+      { "label": "Dependency on S/4HANA upgrade completion before AI layer can be activated", "severity": "medium" }
+    ]
+  },
+  {
+    "id": "joule-for-consultants",
+    "name": "Joule for Consultants",
+    "description": "SAP Joule deployed as an AI productivity tool for EDP's IT consultants and SAP CoE team — assisting with code generation, solution design, documentation, and troubleshooting",
+    "status": "on_track",
+    "progress": 65,
+    "phase": "Pilot Deployment",
+    "owner": "IT & SAP CoE",
+    "targetDate": "Q4 2025",
+    "businessValue": "Increase consultant productivity by 30% and reduce development and documentation time by 40%",
+    "kpis": {
+      "Active Pilot Users": "45",
+      "Time Saved / Task": "35%",
+      "Code Quality Score": "+22%",
+      "Docs Time Reduction": "40%"
+    },
+    "milestones": [
+      { "label": "BTP & Joule Environment Setup", "date": "Jan 2025", "done": true },
+      { "label": "Joule Configuration for SAP CoE", "date": "Mar 2025", "done": true },
+      { "label": "Pilot — 45 Consultants", "date": "Jun 2025", "done": true },
+      { "label": "Broad Rollout (150 consultants)", "date": "Sep 2025", "done": false },
+      { "label": "Full Deployment & Knowledge Base", "date": "Dec 2025", "done": false }
+    ],
+    "risks": [
+      { "label": "Skills gap in prompt engineering — training programme needed before broad rollout", "severity": "low" }
+    ]
+  }
+]
