@@ -163,7 +163,7 @@ Here is the full deep dive on each initiative. 👇
 
 ### 🏢 SAP Autonomous Enterprise
 
-![SAP Autonomous Enterprise](autonomous-photo.jpg)
+![SAP Autonomous Enterprise](https://raw.githubusercontent.com/nunoreismendonca-gif/edp-joule-skill/master/autonomous-photo.jpg)
 
 > Transforming EDP into a self-optimizing enterprise using SAP Business AI — autonomous finance, operations and supply chain across 8 countries.
 
@@ -201,7 +201,7 @@ Here is the full deep dive on each initiative. 👇
 
 ### 🤖 Joule for Consultants
 
-![Joule for Consultants](consultants-photo.jpg)
+![Joule for Consultants](https://raw.githubusercontent.com/nunoreismendonca-gif/edp-joule-skill/master/consultants-photo.jpg)
 
 > SAP Joule deployed as an AI productivity tool for EDP's IT consultants and SAP CoE — code generation, solution design, documentation and troubleshooting.
 
